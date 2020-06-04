@@ -109,6 +109,28 @@ vec4 v02 = (v2 - v0);
 vec4 v12 = (v2 - v1);
 
 
+
+vec4 getRTP(vec4 pos) { //get only relativisticly transformed position
+
+    vec4 xsobs = vec4(gs_in[0].time, 0, 0, 0); //Beoabachter im Beobachter System
+    
+    vec4 xssp = vec4(0, pos.x, pos.y, pos.z); //Ereignis im Gegenstandssystem
+
+    vec4 xssobs = gs_in[0].L2INV * (gs_in[0].L1 * xsobs + gs_in[0].a_1 - gs_in[0].a_2); //Observer im Gegenstandssystem
+
+    xssp[0] = xssobs[0] - (sqrt(pow((xssp[1] - xssobs[1]), 2) + pow((xssp[2] - xssobs[2]), 2) + pow((xssp[3] - xssobs[3]), 2))); //Schnittpunkt mit Weltlinie
+
+    vec4 xsp = gs_in[0].L1INV * (gs_in[0].L2 * xssp + gs_in[0].a_2 - gs_in[0].a_1); //Ereignis im Beobachter System
+
+    
+
+    vec4 outVec = vec4(xsp[1], xsp[2], xsp[3], 1.0); //3d projection
+    
+    return outVec;
+
+}
+
+
 vec4 getTP(vec4 pos) { //get transformed position
 
     vec4 xsobs = vec4(gs_in[0].time, 0, 0, 0); //Beoabachter im Beobachter System
@@ -176,9 +198,11 @@ void main(){
     vec4 va;
     vec4 vb;
 
+    vec4 viipp;
+
     float dist;
-    float tolerance = 0.006;
-    float tostep = 0.02;
+    float tolerance = 0.002;
+    float tostep = 0.003;
 
     int maxLayers = 10;
     int neededlayers = 2;
@@ -188,10 +212,16 @@ void main(){
         int ipp = i++;
         if(ipp==3) ipp = 0;
         
-        va = getTP( gs_in[i].in_pos) + 0.5 *(  getTP(gs_in[ipp].in_pos) - getTP(gs_in[i].in_pos) );
-        vb = getTP( gs_in[i].in_pos + 0.5* ( gs_in[ipp].in_pos - gs_in[i].in_pos )  );
+        //Mitte der transformierten Punkte:
+        va = getRTP( gs_in[i].in_pos) + 0.5 *(  getRTP(gs_in[ipp].in_pos) - getRTP(gs_in[i].in_pos) );
+        
+        //Transformierte Mitte:
+        vb = getRTP( gs_in[i].in_pos + 0.5* ( gs_in[ipp].in_pos - gs_in[i].in_pos )  );
 
-        dist = length(va -vb);
+        //Verbindungsvektor zwischen den transformierten Punkten:
+        viipp = getRTP(gs_in[ipp].in_pos) - getRTP(gs_in[i].in_pos);
+
+        dist = length(va -vb)/length(viipp);
 
         while(dist > (tolerance+float(neededlayers)*tostep)){
             if(neededlayers>(maxLayers-1)) break;
@@ -200,6 +230,7 @@ void main(){
             //tostep += 0.005;
         }
 
+        //Wenn maximale Teilung aufgrund einer Seite -> skip
         if(neededlayers >= maxLayers) break;
 
     }
