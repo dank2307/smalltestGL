@@ -201,11 +201,11 @@ void main(){
     vec4 viipp;
 
     float dist;
-    float tolerance = 0.002;
-    float tostep = 0.003;
+    float subd_dist = 0.003;
 
-    int maxLayers = 10;
-    int neededlayers = 2;
+
+    int maxLayers = 4;
+    int neededlayers = 1;
 
     for(int i=0; i<3; i++){
         
@@ -223,15 +223,9 @@ void main(){
 
         dist = length(va -vb)/length(viipp);
 
-        while(dist > (tolerance+float(neededlayers)*tostep)){
-            if(neededlayers>(maxLayers-1)) break;
+        
+        neededlayers = ( int(dist/subd_dist) < maxLayers ) ?  int(dist/subd_dist) : maxLayers ;
 
-            neededlayers++;
-            //tostep += 0.005;
-        }
-
-        //Wenn maximale Teilung aufgrund einer Seite -> skip
-        if(neededlayers >= maxLayers) break;
 
     }
     
