@@ -139,7 +139,9 @@ vec4 getTP(vec4 pos) { //get transformed position
 
     vec4 xssobs = gs_in[0].L2INV * (gs_in[0].L1 * xsobs + gs_in[0].a_1 - gs_in[0].a_2); //Observer im Gegenstandssystem
 
-    xssp[0] = xssobs[0] - (sqrt(pow((xssp[1] - xssobs[1]), 2) + pow((xssp[2] - xssobs[2]), 2) + pow((xssp[3] - xssobs[3]), 2))); //Schnittpunkt mit Weltlinie
+    //xssp[0] = xssobs[0] - (sqrt(pow((xssp[1] - xssobs[1]), 2) + pow((xssp[2] - xssobs[2]), 2) + pow((xssp[3] - xssobs[3]), 2))); //Schnittpunkt mit Weltlinie
+    xssp[0] = xssobs[0] - length(vec3(xssp.yzw) - vec3(xssobs.yzw));
+
 
     vec4 xsp = gs_in[0].L1INV * (gs_in[0].L2 * xssp + gs_in[0].a_2 - gs_in[0].a_1); //Ereignis im Beobachter System
 
@@ -209,7 +211,7 @@ void main(){
 
     for(int i=0; i<3; i++){
         
-        int ipp = i++;
+        int ipp = i+1;
         if(ipp==3) ipp = 0;
         
         //Mitte der transformierten Punkte:

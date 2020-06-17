@@ -190,7 +190,7 @@ int main(void){
 
 
     //Gegenstandssystem:
-    glm::vec3 beta2 = 0.99f*glm::normalize(glm::vec3(0.5f, -0.3f, 0.0f));
+    glm::vec3 beta2 = 0.8f*glm::normalize(glm::vec3(0.5f, -0.3f, 0.0f));
     glm::vec3 a2 = glm::vec3(0.0f, 0.0f, 0.0f);
 
     SrtObject srtWuerfel;
