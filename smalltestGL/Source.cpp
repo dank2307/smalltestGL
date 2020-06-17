@@ -183,7 +183,7 @@ int main(void){
 
     //Beobachter System:
     glm::vec3 beta1 = glm::vec3(0.0f, 0.0f,0.0f);
-    glm::vec3 a1 = glm::vec3(0.0f, 0.0f, 8.0f);
+    glm::vec3 a1 = glm::vec3(0.0f, 0.0f, 16.0f);
     
     SrtObject srtBeobachter;
     srtBeobachter.setPoincare(beta1, a1);
@@ -219,7 +219,7 @@ int main(void){
     //Kamera initialisieren:
     Camera myCamera;
     myCamera.setModel();
-    myCamera.setView(a1,glm::vec3(0.0f,0.0f,0.0f));
+    myCamera.setView(glm::vec3(0.0f,0.0f,0.0f) ,glm::vec3(0.0f,0.0f,-1.0f));
     myCamera.setProjection(30.0f, W_WIDTH, W_HEIGHT, 0.1f, 100.0f);
 
 
@@ -231,7 +231,7 @@ int main(void){
     //_______________________________________________________
     glEnable(GL_DEPTH_TEST);
    
-    float timeValue = 0.0f;
+    float timeValue = 5.0f;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
